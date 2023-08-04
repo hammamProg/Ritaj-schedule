@@ -1,0 +1,14 @@
+# Ignore files with .log extension
+*.log
+
+# Ignore a directory named 'venv'
+venv/
+
+# Ignore a file named 'config.ini'
+config.ini
+
+# Ignore all files in a directory named 'secret_data'
+secret_data/*
+
+# Ignore a specific file path relative to the root of the repository
+path/to/file.txt

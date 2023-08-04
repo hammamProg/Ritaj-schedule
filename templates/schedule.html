@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Schedule</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <style>
+       /* Styling for the modal */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+  background-color: white;
+  margin: 5% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 53%;
+}
+
+.close {
+  float: right;
+  cursor: pointer;
+}
+.close1 {
+  float: right;
+  cursor: pointer;
+}
+
+        .gray {
+            background-color: #ababab;
+        }
+
+        .slot-border {
+            border: 1px solid black;
+            background-color: #99fecc;
+        }
+        thead tr{
+            width:100px;
+        }
+
+
+    .slot-style{
+        display: block;
+        position: relative;
+        border-left: 1px solid black;
+        border-right: 1px solid black;
+        
+        text-align: center;
+        width:100px;
+        height: 30px;
+        top: 0;
+        cursor:pointer;
+        
+    }
+    .header-row{
+        border: 1px solid black;
+        position: relative;
+        left:0;
+        width: 1092px;
+
+    }
+    .header-slot{
+        position: relative;
+        width: 100px;
+        height: 10px;
+    }
+
+    tbody{
+        position: absolute;
+        width: 1092px;
+        direction: ltr;
+    }
+
+    .day{
+        height: 30px;
+        width: 100px;
+        display: block;
+        
+    }
+
+    .row{
+        border: 1px solid black;
+        position: relative;
+        margin-top: 5px;
+        
+    }
+    
+    
+    footer{
+        position: absolute;
+        left: 50%;
+        bottom: 5%;
+        transform: translate(-50%,-50%);
+    }
+    </style>
+    
+</head>
+<body>
+    <div class="container">
+       <br>
+
+       <div class="media">
+        <img class="mr-3" src="/static/lo-15.png" width="100px" alt="Generic placeholder image">
+        <div class="media-body">
+            <h5 class="mt-0"> Make Your Schedule</h5>
+                This website is designed to help you designing your schedule before you do it on Ritaj
+        </div>
+        </div>
+
+           <!-- Display flash messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    {% if category=='fail' %}
+                        <div class="p-3 mb-2 bg-danger text-white rounded">
+                            {{ message }}
+                        </div>
+                    {%elif category=='success' %}
+                        <div class="p-3 mb-2 bg-success text-white rounded">
+                            {{ message }}
+                        </div>
+                    {% endif %}
+                    
+             
+                    
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <table class="table table-sm border border-dark mt-4 fixed-size-table">
+            <thead >
+                <tr class="gray border border-dark header-row">
+                    <th class="border border-dark header-slot "><b>Day</b> </th>
+
+                    {% for hour in hours %}
+                        <th class="border border-dark header-slot"><b>{{ hour }}</b></th>
+                    {% endfor %}
+
+                </tr>
+            </thead>
+            <tbody>
+                {% for day in days %}
+                    <tr class="row">
+                        <th class="border border-dark day">{{ day }}</th>
+                        {% for hour in hours %}
+                            <td>
+
+                                {% if session['my_list'] %}
+                                {% for course in session['my_list']%}
+
+                                    {% if (course[2][0]== day or course[2][1]== day or course[2][2]== day or course[2][3]== day or course[2][4]== day or course[2][5]== day or course[2][6]== day) and ((((course[1][1][0]-course[1][0][0])*60)+course[1][1][1]-course[1][0][1])>40) %}
+                                            <div class="slot-style" id="{{course[0]}}" style="position: absolute; width:{{ (((course[1][1][0]-course[1][0][0])*63.5)+course[1][1][1]-course[1][0][1]) *1.35 }}px; left:{{100+ 85* ((course[1][0][0]-7)) + (course[1][0][1])  }}px; background: {{course[4]}};" >
+                                            {{course[0]}}
+                                            </div>                                            
+                                    {% endif %}
+
+                                {% endfor %}
+                                {% endif %}
+                               
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <br><br><br><br><br><br><br><br><br><br><br><br>
+        
+        <div>
+        <button class="btn btn-primary" style="background:#1A5D1A; border-color:#1A5D1A;" id="addItemBtn">Add Course</button>
+        <a href="" class="btn btn-info" id="editCoursesBtn" onclick="captureAndDownload()">Save Schedule</a>
+
+        {# <a href="{{url_for('clear_list')}}" class="btn btn-danger" >Delete All Courses</a> #}
+
+        </div>
+
+        <br><br><br><br>
+  
+                    <ul class="list-group">
+                        {% if session['my_list'] %}
+                        {% for course in session['my_list']%}
+                            <li class="list-group-item">
+                                <a class="color-box btn"  href="{{ url_for('edit_course', course_index=loop.index0) }}" style="color:black ;background-color: {{ course[4] }}; width:400px;">{{ course[0] }}</a>
+                                <a href="" class="btn btn-secondary" id="editCoursesBtn">Edit Course</a>
+                                <a href="{{url_for('delete_course',course_index=loop.index0)}}" class="btn btn-danger">Delete Course</a>
+
+                                <p>{{ course[1] }}</p>
+                                <p>{{ course[2][0] }}</p>
+                                <p>{{ course[3][0] }}</p>
+                                <p>{{ course[4] }}</p>
+                                
+                            </li>
+                        {% endfor %}
+                        {% endif %}
+
+                    </ul>
+                <!-- The content of the edit form will be loaded dynamically via JavaScript -->
+                <div id="editFormContent"></div>
+
+
+
+
+
+{# #################################### Add Course Form #####################################}
+
+    <div id="addItemModal" class="modal">
+    <div class="modal-content">
+    <span class="close">&times;</span>
+
+    <form method="post" action="{{url_for('show_schedule')}}">
+    <div class="form-group">
+      <input type="text" class="form-control" name="courseTitle" id="courseTitle" placeholder="Course Title" maxlength="40" required>
+        <br>
+      <label for="slotColor">Color of the Slot:</label><br>
+      <input type="color" name="slotColor" id="slotColor" value="#99fecc">
+        <br><br>
+      <label>Meeting Time:</label>
+      <div class="form-check">
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="monday" name="meetingDay" value="Monday">
+            <label class="form-check-label" for="monday">Monday</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="tuesday" name="meetingDay" value="Tuesday">
+            <label class="form-check-label" for="tuesday">Tuesday</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="wednesday" name="meetingDay" value="Wednesday">
+            <label class="form-check-label" for="wednesday">Wednesday</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="thursday" name="meetingDay" value="Thursday">
+            <label class="form-check-label" for="thursday">Thursday</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" class="disabled" type="checkbox" id="friday" name="meetingDay" value="Friday" disabled>
+            <label class="form-check-label" for="friday">Friday</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="saturday" name="meetingDay" value="Saturday">
+            <label class="form-check-label" for="saturday">Saturday</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input  class="form-check-input" class="disabled" type="checkbox" id="sunday" name="meetingDay" value="Sunday" disabled>
+            <label class="form-check-label" for="sunday">Sunday</label>
+        </div>
+      </div>
+        <br>
+      <label for="startTime">Start Time:</label>
+      <input type="time"  class="form-control"  name="startTime" id="startTime" min="07:00" max="18:00" required>
+
+      <label for="endTime">End Time:</label>
+      <input type="time" class="form-control" name="endTime" id="endTime" min="09:00" max="19:00" required>
+        <br>
+      <label for="instructor">Instructor:</label>
+      <input type="text" class="form-control" name="instructor" id="instructor" placeholder="Dr.">
+        <br>
+      <button class="btn btn-primary" type="submit" >Add Course</button>
+      </div>
+    </form>
+    </div>
+    </div>
+
+{# #################################### Edit Course Form #####################################}
+    <div id="editItemModal" class="modal">
+    <div class="modal-content">
+    <span class="close2">&times;</span>
+
+    <form method="post" action="{{url_for('edit_course',course_index=1)}}">
+    <div class="form-group">
+      <input type="text" class="form-control" name="courseTitle" id="courseTitle" placeholder="Course Title" maxlength="40" required>
+        <br>
+      <label for="slotColor">Color of the Slot:</label><br>
+      <input type="color" name="slotColor" id="slotColor" value="#99fecc">
+        <br><br>
+      <label>Meeting Time:</label>
+      <div class="form-check">
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="monday" name="meetingDay" value="Monday">
+            <label class="form-check-label" for="monday">Monday</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="tuesday" name="meetingDay" value="Tuesday">
+            <label class="form-check-label" for="tuesday">Tuesday</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="wednesday" name="meetingDay" value="Wednesday">
+            <label class="form-check-label" for="wednesday">Wednesday</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="thursday" name="meetingDay" value="Thursday">
+            <label class="form-check-label" for="thursday">Thursday</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" class="disabled" type="checkbox" id="friday" name="meetingDay" value="Friday" disabled>
+            <label class="form-check-label" for="friday">Friday</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="saturday" name="meetingDay" value="Saturday">
+            <label class="form-check-label" for="saturday">Saturday</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input  class="form-check-input" class="disabled" type="checkbox" id="sunday" name="meetingDay" value="Sunday" disabled>
+            <label class="form-check-label" for="sunday">Sunday</label>
+        </div>
+      </div>
+        <br>
+      <label for="startTime">Start Time:</label>
+      <input type="time"  class="form-control"  name="startTime" id="startTime" min="07:00" max="18:00" required>
+
+      <label for="endTime">End Time:</label>
+      <input type="time" class="form-control" name="endTime" id="endTime" min="09:00" max="19:00" required>
+        <br>
+      <label for="instructor">Instructor:</label>
+      <input type="text" class="form-control" name="instructor" id="instructor" placeholder="Dr.">
+        <br>
+      <button class="btn btn-primary" type="submit" >Save Edit</button>
+      </div>
+    </form>
+    </div>
+    </div>
+
+
+
+</div>
+
+
+<br><br><br><br><br><br><br>
+
+{# 
+
+<footer class="text-secondary" style="bottom: 0%; ">
+<center>
+<a class="badge badge-pill" href="https://docs.google.com/forms/d/e/1FAIpQLScowRY0aVKKqa84w_qYWxfmTU-a_gLyJFVpBnrKmID3Lh8RAQ/viewform?usp=sf_link">بتواجه مشكلة ؟ عندك اقتراح لتحسين الموقع ؟</a>
+</center>
+<br>
+
+
+<center>
+@2023 Hammam Abo Jamous, PLE. All rights reserved
+</center>
+</footer>
+
+
+ #}
+
+
+
+
+
+    <script>
+
+
+
+// -----------------------------------------------------------------
+
+    // Get the button and modal elements
+const addItemBtn = document.getElementById('addItemBtn');
+const addItemModal = document.getElementById('addItemModal');
+const closeModal = document.getElementsByClassName('close')[0];
+
+// Show the modal when the button is clicked
+addItemBtn.addEventListener('click', () => {
+  addItemModal.style.display = 'block';
+});
+
+// Close the modal when the close button is clicked
+closeModal.addEventListener('click', () => {
+  addItemModal.style.display = 'none';
+});
+
+// Close the modal when clicking outside the modal content
+window.addEventListener('click', (event) => {
+  if (event.target == addItemModal) {
+    addItemModal.style.display = 'none';
+  }
+});
+
+// -----------------------------------------------------------------
+    // Get the button and modal elements
+const editItemBtn = document.getElementById('editCoursesBtn');
+const editItemModal = document.getElementById('editItemModal');
+const closeEditModal = document.getElementsByClassName('close')[0];
+
+// Show the modal when the button is clicked
+editItemBtn.addEventListener('click', () => {
+  addItemModal.style.display = 'block';
+});
+
+// Close the modal when the close button is clicked
+closeEditModal.addEventListener('click', () => {
+  editItemModal.style.display = 'none';
+});
+
+// Close the modal when clicking outside the modal content
+window.addEventListener('click', (event) => {
+  if (event.target == editItemModal) {
+    editItemModal.style.display = 'none';
+  }
+});
+// -----------------------------------------------------------------
+
+
+
+
+function validateForm() {
+            // Get all checkboxes with name="day"
+            const checkboxes = document.querySelectorAll('input[name="meetingDay"]');
+            console.log("hello")
+            let isAnyChecked = false;
+
+            // Check if at least one checkbox is checked
+            for (const checkbox of checkboxes) {
+                if (checkbox.checked) {
+                    isAnyChecked = true;
+                    break;
+                }
+            }
+
+            // If none of the checkboxes are checked, show an error message and prevent form submission
+            if (!isAnyChecked) {
+                alert('Please select at least one day.');
+                return false;
+            }
+
+            // Form is valid, allow form submission
+            return true;
+        }
+
+
+function downloadURI(uri, name) {
+    const link = document.createElement("a");
+    link.download = name;
+    link.href = uri;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+function captureAndDownload() {
+    const table = document.querySelector('table');
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+
+    const tableImage = new Image();
+
+    // Use DOMParser to create a new document with the table content and render it as an SVG
+    const svgDoc = new DOMParser().parseFromString('<svg xmlns="http://www.w3.org/2000/svg">' + table.outerHTML + '</svg>', 'application/xml');
+    const svgBlob = new Blob([svgDoc.documentElement.outerHTML], { type: 'image/svg+xml' });
+
+    // Set the source of the image to the blob URL
+    tableImage.src = URL.createObjectURL(svgBlob);
+
+    tableImage.onload = () => {
+        setTimeout(() => {
+            canvas.width = table.clientWidth;
+            canvas.height = table.clientHeight;
+            context.drawImage(tableImage, 0, 0);
+
+            // Convert the canvas data to a data URL
+            const dataURL = canvas.toDataURL('image/png');
+
+            // Download the schedule image
+            downloadURI(dataURL, 'schedule.png');
+        }, 100); // You can adjust the delay time as needed
+    };
+}
+    
+
+    </script>
+</body>
+</html>
+
+
+
