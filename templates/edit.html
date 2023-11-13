@@ -1,25 +1,74 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-KSPM2VTEL6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-KSPM2VTEL6');
+</script>
     <title>Edit Course</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
     <div class="container">
-        <h2>Edit Course</h2>
-        <form method="POST" action="/update">
-            <div class="form-group">
-                <label for="course_name">Course Name:</label>
-                <input type="text" class="form-control" id="course_name" name="course_name" value="{{ course.course }}">
+       <br>
+        <h1>Edit Course</h1>
+    <form method="post" action="{{url_for('edit_course',course_index=course_index)}}">
+        <div class="form-group">
+          <input type="text" class="form-control" name="courseTitle" id="courseTitle" placeholder="Course Title" maxlength="40" required value="{{course[0]}}">
+            <br>
+          <label for="slotColor">Color of the Slot:</label><br>
+          <input type="color" name="slotColor" id="slotColor" value="{{course[4]}}">
+            <br><br>
+          <label>Meeting Time:</label>
+          <div class="form-check border m-3 p-2">
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="monday" name="meetingDay" value="Monday" {% if "Monday" in course[2] %}checked{% endif %}>
+                <label class="form-check-label" for="monday">Monday</label>
             </div>
-            <div class="form-group">
-                <label for="instructor_name">Instructor Name:</label>
-                <input type="text" class="form-control" id="instructor_name" name="instructor_name" value="{{ course.instructor }}">
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="tuesday" name="meetingDay" value="Tuesday" {% if "Tuesday" in course[2] %}checked{% endif %}>
+                <label class="form-check-label" for="tuesday">Tuesday</label>
             </div>
-            <input type="hidden" name="day_index" value="{{ day_index }}">
-            <input type="hidden" name="time_index" value="{{ time_index }}">
-            <button type="submit" class="btn btn-primary">Update</button>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="wednesday" name="meetingDay" value="Wednesday" {% if "Wednesday" in course[2] %}checked{% endif %}>
+                <label class="form-check-label" for="wednesday">Wednesday</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="thursday" name="meetingDay" value="Thursday" {% if "Thursday" in course[2] %}checked{% endif %}>
+                <label class="form-check-label" for="thursday">Thursday</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" class="disabled" type="checkbox" id="friday" name="meetingDay" value="Friday" disabled>
+                <label class="form-check-label" for="friday">Friday</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="saturday" name="meetingDay" value="Saturday" {% if "Saturday" in course[2] %}checked{% endif %}>
+                <label class="form-check-label" for="saturday">Saturday</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input  class="form-check-input" class="disabled" type="checkbox" id="sunday" name="meetingDay" value="Sunday" disabled>
+                <label class="form-check-label" for="sunday">Sunday</label>
+            </div>
+          </div>
+
+
+            <br>
+          <label for="startTime">Start Time:</label>
+          <input type="time"  class="form-control"  name="startTime" id="startTime" min="07:00" max="18:00" required value="{{"{:02d}".format(course[1][0][0])}}:{{"{:02d}".format(course[1][0][1])}}">
+          <label for="endTime">End Time:</label>
+          <input type="time" class="form-control" name="endTime" id="endTime" min="08:45" max="19:00" required value="{{"{:02d}".format(course[1][1][0])}}:{{"{:02d}".format(course[1][1][1])}}">
+          <label for="instructor">Section:</label>
+          <input type="number" class="form-control" name="instructor" id="instructor"i min="0" placeholder="" value="{{course[3]}}">
+            <br>
+          <button class="btn btn-primary" type="submit" >Save Changes</button>
+          </div>
         </form>
+
     </div>
 </body>
 </html>

@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-KSPM2VTEL6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-KSPM2VTEL6');
+</script>
     <title>Schedule</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
@@ -28,10 +37,7 @@
   float: right;
   cursor: pointer;
 }
-.close1 {
-  float: right;
-  cursor: pointer;
-}
+
 
         .gray {
             background-color: #ababab;
@@ -41,9 +47,17 @@
             border: 1px solid black;
             background-color: #99fecc;
         }
+        .table{
+            width: 1108px;
+            background: white;
+        }
         thead tr{
             width:100px;
         }
+        table tbody{
+            background-color: white;
+        }
+
 
 
     .slot-style{
@@ -51,13 +65,12 @@
         position: relative;
         border-left: 1px solid black;
         border-right: 1px solid black;
-        
         text-align: center;
         width:100px;
         height: 30px;
         top: 0;
         cursor:pointer;
-        
+
     }
     .header-row{
         border: 1px solid black;
@@ -82,17 +95,17 @@
         height: 30px;
         width: 100px;
         display: block;
-        
+
     }
 
     .row{
         border: 1px solid black;
         position: relative;
         margin-top: 5px;
-        
+
     }
-    
-    
+
+
     footer{
         position: absolute;
         left: 50%;
@@ -100,10 +113,12 @@
         transform: translate(-50%,-50%);
     }
     </style>
-    
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5309815543853242"
+     crossorigin="anonymous"></script>
 </head>
 <body>
-    <div class="container">
+    <div id="example-table" class="container">
        <br>
 
        <div class="media">
@@ -126,15 +141,19 @@
                         <div class="p-3 mb-2 bg-success text-white rounded">
                             {{ message }}
                         </div>
+                    {%elif category=='warning' %}
+                        <div class="p-3 mb-2 bg-warning text-black rounded">
+                            {{ message }}
+                        </div>
                     {% endif %}
-                    
-             
-                    
+
+
+
                 {% endfor %}
             {% endif %}
         {% endwith %}
 
-        <table class="table table-sm border border-dark mt-4 fixed-size-table">
+        <table    class="table table-sm border border-dark mt-4 fixed-size-table">
             <thead >
                 <tr class="gray border border-dark header-row">
                     <th class="border border-dark header-slot "><b>Day</b> </th>
@@ -145,7 +164,7 @@
 
                 </tr>
             </thead>
-            <tbody>
+            <tbody >
                 {% for day in days %}
                     <tr class="row">
                         <th class="border border-dark day">{{ day }}</th>
@@ -158,44 +177,47 @@
                                     {% if (course[2][0]== day or course[2][1]== day or course[2][2]== day or course[2][3]== day or course[2][4]== day or course[2][5]== day or course[2][6]== day) and ((((course[1][1][0]-course[1][0][0])*60)+course[1][1][1]-course[1][0][1])>40) %}
                                             <div class="slot-style" id="{{course[0]}}" style="position: absolute; width:{{ (((course[1][1][0]-course[1][0][0])*63.5)+course[1][1][1]-course[1][0][1]) *1.35 }}px; left:{{100+ 85* ((course[1][0][0]-7)) + (course[1][0][1])  }}px; background: {{course[4]}};" >
                                             {{course[0]}}
-                                            </div>                                            
+                                            </div>
                                     {% endif %}
 
                                 {% endfor %}
                                 {% endif %}
-                               
+
                             </td>
                         {% endfor %}
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
-        
+
         <br><br><br><br><br><br><br><br><br><br><br><br>
-        
+
         <div>
         <button class="btn btn-primary" style="background:#1A5D1A; border-color:#1A5D1A;" id="addItemBtn">Add Course</button>
-        <a href="" class="btn btn-info" id="editCoursesBtn" onclick="captureAndDownload()">Save Schedule</a>
-
+        <!--
+        {% if session['my_list'] %}
+        <a class="btn btn-info" id="dl-table">Save Schedule</a>
+        {%endif%}
         {# <a href="{{url_for('clear_list')}}" class="btn btn-danger" >Delete All Courses</a> #}
-
+        -->
         </div>
 
         <br><br><br><br>
-  
+
                     <ul class="list-group">
                         {% if session['my_list'] %}
                         {% for course in session['my_list']%}
                             <li class="list-group-item">
-                                <a class="color-box btn"  href="{{ url_for('edit_course', course_index=loop.index0) }}" style="color:black ;background-color: {{ course[4] }}; width:400px;">{{ course[0] }}</a>
-                                <a href="" class="btn btn-secondary" id="editCoursesBtn">Edit Course</a>
-                                <a href="{{url_for('delete_course',course_index=loop.index0)}}" class="btn btn-danger">Delete Course</a>
-
+                                <a class="color-box btn"  href="{{ url_for('edit_course', course_index=loop.index0) }}" style="color:black ;background-color: {{ course[4] }}; width:400px;">{{ course[0] }} - {{course[3]}}</a>
+                                {% set current_course = course %}
+                                <a href="{{url_for('edit_course',course_index=loop.index0)}}" class="btn btn-secondary" id="editCoursesBtn">Edit Course</a>
+                                <a href="{{url_for('delete_course',course_index=loop.index0)}}" class="btn btn-danger" >Delete Course</a>
+{#
                                 <p>{{ course[1] }}</p>
                                 <p>{{ course[2][0] }}</p>
                                 <p>{{ course[3][0] }}</p>
-                                <p>{{ course[4] }}</p>
-                                
+                                <p>{{ course[4] }}</p> #}
+
                             </li>
                         {% endfor %}
                         {% endif %}
@@ -257,10 +279,10 @@
       <input type="time"  class="form-control"  name="startTime" id="startTime" min="07:00" max="18:00" required>
 
       <label for="endTime">End Time:</label>
-      <input type="time" class="form-control" name="endTime" id="endTime" min="09:00" max="19:00" required>
+      <input type="time" class="form-control" name="endTime" id="endTime" min="08:45" max="19:00" required>
         <br>
-      <label for="instructor">Instructor:</label>
-      <input type="text" class="form-control" name="instructor" id="instructor" placeholder="Dr.">
+      <label for="Section">Section:</label>
+      <input type="number" class="form-control" name="instructor" id="instructor" placeholder="" min="0">
         <br>
       <button class="btn btn-primary" type="submit" >Add Course</button>
       </div>
@@ -269,63 +291,7 @@
     </div>
 
 {# #################################### Edit Course Form #####################################}
-    <div id="editItemModal" class="modal">
-    <div class="modal-content">
-    <span class="close2">&times;</span>
 
-    <form method="post" action="{{url_for('edit_course',course_index=1)}}">
-    <div class="form-group">
-      <input type="text" class="form-control" name="courseTitle" id="courseTitle" placeholder="Course Title" maxlength="40" required>
-        <br>
-      <label for="slotColor">Color of the Slot:</label><br>
-      <input type="color" name="slotColor" id="slotColor" value="#99fecc">
-        <br><br>
-      <label>Meeting Time:</label>
-      <div class="form-check">
-        <div class="form-check form-check-inline">
-            <input class="form-check-input" type="checkbox" id="monday" name="meetingDay" value="Monday">
-            <label class="form-check-label" for="monday">Monday</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input" type="checkbox" id="tuesday" name="meetingDay" value="Tuesday">
-            <label class="form-check-label" for="tuesday">Tuesday</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input" type="checkbox" id="wednesday" name="meetingDay" value="Wednesday">
-            <label class="form-check-label" for="wednesday">Wednesday</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input" type="checkbox" id="thursday" name="meetingDay" value="Thursday">
-            <label class="form-check-label" for="thursday">Thursday</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input" class="disabled" type="checkbox" id="friday" name="meetingDay" value="Friday" disabled>
-            <label class="form-check-label" for="friday">Friday</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input" type="checkbox" id="saturday" name="meetingDay" value="Saturday">
-            <label class="form-check-label" for="saturday">Saturday</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input  class="form-check-input" class="disabled" type="checkbox" id="sunday" name="meetingDay" value="Sunday" disabled>
-            <label class="form-check-label" for="sunday">Sunday</label>
-        </div>
-      </div>
-        <br>
-      <label for="startTime">Start Time:</label>
-      <input type="time"  class="form-control"  name="startTime" id="startTime" min="07:00" max="18:00" required>
-
-      <label for="endTime">End Time:</label>
-      <input type="time" class="form-control" name="endTime" id="endTime" min="09:00" max="19:00" required>
-        <br>
-      <label for="instructor">Instructor:</label>
-      <input type="text" class="form-control" name="instructor" id="instructor" placeholder="Dr.">
-        <br>
-      <button class="btn btn-primary" type="submit" >Save Edit</button>
-      </div>
-    </form>
-    </div>
-    </div>
 
 
 
@@ -334,7 +300,7 @@
 
 <br><br><br><br><br><br><br>
 
-{# 
+{#
 
 <footer class="text-secondary" style="bottom: 0%; ">
 <center>
@@ -356,8 +322,6 @@
 
 
     <script>
-
-
 
 // -----------------------------------------------------------------
 
@@ -391,7 +355,7 @@ const closeEditModal = document.getElementsByClassName('close')[0];
 
 // Show the modal when the button is clicked
 editItemBtn.addEventListener('click', () => {
-  addItemModal.style.display = 'block';
+  editItemModal.style.display = 'block';
 });
 
 // Close the modal when the close button is clicked
@@ -407,32 +371,6 @@ window.addEventListener('click', (event) => {
 });
 // -----------------------------------------------------------------
 
-
-
-
-function validateForm() {
-            // Get all checkboxes with name="day"
-            const checkboxes = document.querySelectorAll('input[name="meetingDay"]');
-            console.log("hello")
-            let isAnyChecked = false;
-
-            // Check if at least one checkbox is checked
-            for (const checkbox of checkboxes) {
-                if (checkbox.checked) {
-                    isAnyChecked = true;
-                    break;
-                }
-            }
-
-            // If none of the checkboxes are checked, show an error message and prevent form submission
-            if (!isAnyChecked) {
-                alert('Please select at least one day.');
-                return false;
-            }
-
-            // Form is valid, allow form submission
-            return true;
-        }
 
 
 function downloadURI(uri, name) {
@@ -472,9 +410,24 @@ function captureAndDownload() {
         }, 100); // You can adjust the delay time as needed
     };
 }
-    
+
+document.getElementById("dl-table").onclick=function(){
+    const screenShotTarget = document.getElementById('example-table');
+    html2canvas(screenShotTarget).then((canvas)=> {
+        const base64image = canvas.toDataURL("image/png");
+        var anchor = document.createElement('a');
+        anchor.setAttribute("href", base64image);
+        anchor.setAttribute("download", "Schedule.png");
+        anchor.click();
+        anchor.remove();
+
+    });
+};
+
 
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
+
 </body>
 </html>
 
